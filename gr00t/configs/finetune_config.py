@@ -14,7 +14,7 @@
 # limitations under the License.
 
 # Finetune config used for single node post-training.
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 @dataclass
@@ -40,9 +40,18 @@ class FinetuneConfig:
 
     modality_config_path: str | None = None
     """
-    Path to a Python file defining the modality configuration for the given embodiment. 
+    Path to a Python registration file or modality JSON for the given embodiment.
     If None, use the pre-registered modality config in `gr00t/configs/data/embodiment_configs.py`. 
     """
+
+    use_tactile: bool = field(default=False, kw_only=True)
+    """Enable the tactile section of the modality JSON and its trainable encoder."""
+
+    tactile_encoder: str | None = field(default=None, kw_only=True)
+    """Override the JSON encoder: finger_mlp, finger_transformer, or module:factory."""
+
+    tactile_embed_dim: int | None = field(default=None, kw_only=True)
+    """Override the tactile latent width from the modality JSON."""
 
     # --- Model Tuning Flags ---
     tune_llm: bool = False
