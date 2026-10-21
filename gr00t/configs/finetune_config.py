@@ -44,6 +44,9 @@ class FinetuneConfig:
     If None, use the pre-registered modality config in `gr00t/configs/data/embodiment_configs.py`. 
     """
 
+    letter_box_transform: bool | None = field(default=None, kw_only=True)
+    """Override letterboxing; None retains the saved processor setting."""
+
     use_tactile: bool = field(default=False, kw_only=True)
     """Enable the selected config's tactile settings and its trainable encoder."""
 

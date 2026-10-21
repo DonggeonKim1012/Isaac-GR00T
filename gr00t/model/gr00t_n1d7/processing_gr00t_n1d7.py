@@ -174,7 +174,7 @@ class Gr00tN1d7Processor(BaseProcessor):
         state_dropout_prob: float = 0.0,
         # Normalization
         use_mean_std: bool = False,
-        # Backward-compat params (stored but not actively used)
+        # Image aspect-ratio handling (used by training and inference)
         letter_box_transform: bool = False,
         use_tactile: bool = False,
         tactile_state_keys: list[str] | None = None,
@@ -249,6 +249,7 @@ class Gr00tN1d7Processor(BaseProcessor):
         self.statistics: dict[str, dict[str, dict[str, dict[str, list[float]]]]] = {}
 
         # Choose between torchvision and albumentations transforms
+        # Honor the saved image recipe independently of tactile conditioning.
         self.use_albumentations = use_albumentations
         if use_albumentations:
             self.train_image_transform, self.eval_image_transform = (
@@ -260,6 +261,7 @@ class Gr00tN1d7Processor(BaseProcessor):
                     shortest_image_edge,
                     crop_fraction,
                     extra_augmentation_config=self.extra_augmentation_config,
+                    letter_box_transform=self.letter_box_transform,
                 )
             )
         else:
@@ -268,6 +270,7 @@ class Gr00tN1d7Processor(BaseProcessor):
                 image_crop_size,
                 random_rotation_angle,
                 color_jitter_params,
+                letter_box_transform=self.letter_box_transform,
             )
         self._collator = self.data_collator_class(
             model_name=model_name,
@@ -834,6 +837,7 @@ class Gr00tN1d7Processor(BaseProcessor):
                     if key in kwargs:
                         processor_kwargs[key] = kwargs.pop(key)
             override_keys = [
+                "letter_box_transform",
                 "random_rotation_angle",
                 "color_jitter_params",
                 "use_relative_action",

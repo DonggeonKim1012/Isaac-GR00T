@@ -53,6 +53,7 @@ CUDA_VISIBLE_DEVICES=0 python -m gr00t.experiment.launch_finetune \
   --embodiment-tag NEW_EMBODIMENT \
   --modality-config-path examples/CYCLO/ffw_sh5_rev1/ffw_sh5_rev1_config.py \
   --use-tactile \
+  --letter-box-transform False \
   --num-gpus 1 \
   --output-dir <output_dir> \
   --max-steps 1 \
@@ -70,6 +71,13 @@ The launcher copies these into the selected run, and appends tactile state keys
 only when requested. It does not register SH5 globally because SG2 also uses
 `NEW_EMBODIMENT`. The original SG2 import-time registration remains supported.
 `--modality-config-path` accepts Python files only.
+
+Camera definitions do not specify transforms. The training/processor config
+controls resizing, cropping and letterboxing, and those settings are saved for
+inference. Task000650 tactile training used 256x256 resizing, a 230x230 crop, and
+no letterboxing. Preserve that recipe when using its checkpoint. For older
+company checkpoints trained with letterboxing, correct the saved processor's
+`letter_box_transform` to `true`; do not change Task000650's saved `false`.
 
 ## Inference
 

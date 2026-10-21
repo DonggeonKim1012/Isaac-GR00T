@@ -1,3 +1,9 @@
+<p style="color: #d32f2f; font-size: 0.9em; font-weight: normal;">
+🔴 전처리 설정 안내: letter_box_transform은 이미지에 패딩을 붙이고 random crop하는 전처리 방식입니다. 학습과 추론은 촉각 사용 여부와 관계없이 <code>processor_config.json</code>의 <code>processor_kwargs.letter_box_transform</code> 값을 따릅니다. False일 시에는 패딩을 안 붙이고 이미지를 resize합니다.
+기존 회사 코드에서는 이 field가 False여도 항상 레터박스를 적용해 전처리가 되는 식이었습니다. 따라서 기존에 학습한 체크포인트에서 저장된 값이 <code>false</code>였어도, 새 코드 사용 전에 반드시 <code>true</code>로 수정해야 원래 방식대로 이미지 resize가 적용됩니다.
+추가 학습 시 <code>--letter-box-transform True</code> 또는 <code>--letter-box-transform False</code>로 지정할 수 있으며, 생략하면 체크포인트에 저장된 설정을 사용합니다.
+</p>
+
 <div align="center">
 
   <img src="media/header_compress.png" width="800" alt="NVIDIA Isaac GR00T N1.7 Header">

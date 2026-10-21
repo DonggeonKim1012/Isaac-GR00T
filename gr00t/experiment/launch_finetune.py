@@ -149,6 +149,9 @@ if __name__ == "__main__":
     if ft_config.tactile_embed_dim is not None:
         config.model.tactile_embed_dim = ft_config.tactile_embed_dim
 
+    if ft_config.letter_box_transform is not None:
+        config.model.letter_box_transform = ft_config.letter_box_transform
+
     # overwrite with finetune config supplied by the user
     config.model.tune_llm = ft_config.tune_llm
     config.model.tune_visual = ft_config.tune_visual

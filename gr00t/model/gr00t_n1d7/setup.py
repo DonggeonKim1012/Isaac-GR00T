@@ -177,6 +177,10 @@ class Gr00tN1d7Pipeline(ModelPipeline):
 
     def _create_dataset(self, save_cfg_dir: Path):
         """Create appropriate dataset based on task and mode."""
+        # Only override a saved image recipe when explicitly configured.
+        image_kwargs = {}
+        if self.model_config.letter_box_transform is not None:
+            image_kwargs["letter_box_transform"] = self.model_config.letter_box_transform
         tactile_kwargs = {
             key: getattr(self.model_config, key)
             for key in (
@@ -195,6 +199,7 @@ class Gr00tN1d7Pipeline(ModelPipeline):
             processor = AutoProcessor.from_pretrained(
                 self.config.training.start_from_checkpoint,
                 # Overrides
+                **image_kwargs,
                 **tactile_kwargs,
                 modality_configs=self.config.data.modality_configs,
                 use_percentiles=self.model_config.use_percentiles,
@@ -222,6 +227,7 @@ class Gr00tN1d7Pipeline(ModelPipeline):
             )
         else:
             processor = self.processor_class(
+                **image_kwargs,
                 **{
                     k: v
                     for k, v in tactile_kwargs.items()
