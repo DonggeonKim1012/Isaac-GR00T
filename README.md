@@ -435,6 +435,38 @@ Replace `demo_data/cube_to_bowl_5` and `examples/SO100/so100_config.py` with you
 
 ---
 
+### Optional SH5 tactile input
+
+SH5 uses the existing GR00T model and policy with a Python modality config copied into each run.
+`examples/CYCLO/ffw_sh5_rev1/ffw_sh5_rev1_config.py` specifies 54 arm/hand joints and, when enabled,
+90 raw pressure values (two hands, five sensors per hand, nine taxels per sensor).
+The default `finger_mlp` encoder projects pressures to 32 features for the state
+adapter. Enable it explicitly during training:
+
+```bash
+python -m gr00t.experiment.launch_finetune \
+  --base-model-path nvidia/GR00T-N1.7-3B \
+  --dataset-path /path/to/lerobot_v2_dataset \
+  --embodiment-tag NEW_EMBODIMENT \
+  --modality-config-path examples/CYCLO/ffw_sh5_rev1/ffw_sh5_rev1_config.py \
+  --use-tactile \
+  --output-dir /path/to/output
+```
+
+Optional `--tactile-encoder` and `--tactile-embed-dim` override the Python config settings
+for training. Inference must use the encoder and dimensions saved in the
+checkpoint; supply `--use-tactile` to `gr00t.eval.run_gr00t_server` or
+`Gr00tPolicy(..., use_tactile=True)` for a tactile checkpoint. The complete
+[Task000650 checkpoint](https://huggingface.co/Dongkkka/GR00T-N1.7-SH5-Task000650-Tactile)
+includes its processor, statistics, camera mapping, and input/output contract.
+Use the PyTorch path; tactile ONNX/TensorRT export has not been validated.
+
+Existing commands and the [Cyclo SG2 configuration](examples/CYCLO/ffw_sg2_rev1/README.md)
+continue to work with tactile disabled, which is the default. The SH5 Python exports
+do not replace the registered SG2 modality. A legacy relative-action statistics
+cache may be regenerated once to add configuration
+fingerprints, preventing reuse across incompatible modality definitions.
+
 ## Evaluation
 
 ### Open-Loop Evaluation
@@ -564,4 +596,3 @@ Support during Early Access is best-effort. We will continue iterating toward a 
   booktitle  = {ArXiv Preprint},
 }
 ```
-

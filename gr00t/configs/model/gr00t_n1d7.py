@@ -72,6 +72,13 @@ class Gr00tN1d7Config(PretrainedConfig):
     # Action head configuration parameters
     max_state_dim: int = 132  # Default from state_shape
     max_action_dim: int = 132  # Default from action_shape
+    # The optional tactile latent occupies the final state slots, preserving
+    # all pretrained state/action adapter dimensions.
+    use_tactile: bool = field(default=False, kw_only=True)
+    tactile_encoder: str = field(default="finger_mlp", kw_only=True)
+    tactile_embed_dim: int = field(default=32, kw_only=True)
+    tactile_state_keys: list[str] = field(default_factory=list, kw_only=True)
+    tactile_input_shape: tuple[int, int, int] = field(default=(2, 5, 9), kw_only=True)
     action_horizon: int = 40
     hidden_size: int = 1024
     input_embedding_dim: int = 1536
